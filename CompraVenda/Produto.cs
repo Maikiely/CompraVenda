@@ -29,9 +29,9 @@ namespace CompraVenda
         public override string ToString()
         {
 
-            string produto = nome + "\n"; // A variavel produto vai receber o valor nome + quebra de linha
-            produto += quantidadeEstoque + "\n"; // A variavel produto vai receber o valor dela mesma mais a quantidade em estoque + quebra de linha 
-            produto += valor + "\n";// A variavel produto vai receber o valor dela mesma mais o valor do produto + quebra de linha 
+            string produto = "Nome: " + nome + "\n"; // A variavel produto vai receber o valor nome + quebra de linha
+            produto += "Quantidade: " + quantidadeEstoque + "\n"; // A variavel produto vai receber o valor dela mesma mais a quantidade em estoque + quebra de linha 
+            produto += "Valor: " + valor + "\n";// A variavel produto vai receber o valor dela mesma mais o valor do produto + quebra de linha 
 
             return produto; // retorna o produto
         }

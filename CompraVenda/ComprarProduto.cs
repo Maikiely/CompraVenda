@@ -28,54 +28,31 @@ namespace CompraVenda
                 Console.WriteLine(item); // Mostrando todos os itens do estoque
             }
 
-
-            Console.WriteLine("Você é uma pessoa Juridica ou Fisica? J ou F");
-            comprador.tipoComprador = char.Parse(Console.ReadLine());
-
             bool achouComprador = false;
 
-            if (comprador.tipoComprador == 'J' || comprador.tipoComprador == 'j')
+            Console.WriteLine("Digite o seu CNPJ ou CPF");
+            comprador.cpfCnpj = Console.ReadLine();
+            foreach (var item in compradores)
             {
-                Console.WriteLine("Digite o seu CNPJ");
-                comprador.cnpj = Console.ReadLine();
-                foreach (var item in compradores)
+                if (item.cpfCnpj == comprador.cpfCnpj)
                 {
-                    if (item.cnpj == comprador.cnpj)
-                    {
-                        comprador = item;
-                        achouComprador = true;
-                        break;
-                    }
+                    comprador = item;
+                    achouComprador = true;
+                    break;
                 }
-                Console.WriteLine($"Seja bem vindo {comprador.nome}");
-                Console.WriteLine($"CNPJ {comprador.cnpj}");
-                Console.WriteLine($"Idade {comprador.idade}");
-            }
-            else if (comprador.tipoComprador == 'F' || comprador.tipoComprador == 'f')
-            {
-                Console.WriteLine("Digite o seu CPF");
-                comprador.cpf = Console.ReadLine();
-                foreach (var item in compradores)
-                {
-                    if (item.cpf == comprador.cpf)
-                    {
-                        comprador = item;
-                        achouComprador = true;
-                        break;
-                    }
-                }
-                Console.WriteLine($"Seja bem vindo {comprador.nome}");
-                Console.WriteLine($"CNPJ {comprador.cpf}");
-                Console.WriteLine($"Idade {comprador.idade}");
             }
 
             if (!achouComprador)
             {
                 throw new Exception("Para comprar é necessario cadastro.");
-
             }
+
+            Console.WriteLine($"Seja bem vindo {comprador.nome}");
+            Console.WriteLine($"CNPJ {comprador.cpfCnpj }");
+            Console.WriteLine($"Idade {comprador.idade}");
+          
             Console.WriteLine("Quantos itens você deseja Comprar"); // Perguntando quatos tipos de itens o comprador deseja comprar
-            int quant = 0; 
+            int quant = 0;
             if (int.TryParse(Console.ReadLine(), out int valor)) // le um valor e verifica se é um numero inteiro
             {
                 quant = Math.Abs(valor); // atribui para n o valor digitado 
@@ -84,16 +61,17 @@ namespace CompraVenda
             {
                 Console.WriteLine("Qual o produto você deseja comprar?"); // perguntar qual o produto do estoque ele vai querer comprar
                 string prod = Console.ReadLine(); // ler o produto         
-                if (char.IsNumber(prod, 0))
+                if (string.IsNullOrEmpty(prod) || char.IsNumber(prod, 0))
                 {
-                    throw new Exception("Nome do produto não pode ser numero");
+                    throw new Exception("Nome do produto não pode ser numero ou nulo");
                 }
+   
                 // ele pega qualquer produto do estoque e verifica se o nome dele corresponde ao produto digitado
                 if (estoque.Any(produto => produto.nome == prod)) // verifica se o aquele produto tem no estoque
                 {
                     var produto = estoque.FirstOrDefault(x => x.nome == prod); // ele pega o primeiro valor do estoque que possua o nome iqual ao digitado ou nulo
                     Console.WriteLine("Qual a quantidade desse item você deseja?"); // Pergunta quanto daquele item deseja comprar
-                    int quantItem =0; // lendo a quantidade de item
+                    int quantItem = 0; // lendo a quantidade de item
                     if (int.TryParse(Console.ReadLine(), out valor)) // le um valor e verifica se é um numero inteiro
                     {
                         quantItem = Math.Abs(valor); // atribui para n o valor digitado 
@@ -114,21 +92,15 @@ namespace CompraVenda
                             else // se nao
                             {
                                 Console.WriteLine("Informe novamente a quantidade:"); // Pede para informar novamente a quantidade novamente
-                                if (int.TryParse(Console.ReadLine(), out valor)) // le um valor e verifica se é um numero inteiro
-                                {
-                                    quantItem = Math.Abs(valor); // atribui para n o valor digitado 
-                                }
-                                else
-                                {
-                                    throw new Exception("Nao foi possivel converter o seu valor.");
-                                }
+                                quantItem = int.TryParse(Console.ReadLine(), out valor) ? Math.Abs(valor) : throw new Exception("Nao foi possivel converter o seu valor.");
+                                
                                 if (quantItem <= produto.quantidadeEstoque) // verifica se a quantidade digitada é igual a do estoque 
                                 {
                                     car.CarroCompras(produto, quantItem); //Adicionando os itens no carrinho
                                     ListaCompra.Add(car);  // adicionando os produtos do carrinho na lista
                                 }
                             }
-
+                            Console.WriteLine(" ");
                         } while (quantItem > produto.quantidadeEstoque); // condiçao de parada, que é quando a quantidade de item é maior do que quantidade no estoque
                         i++; // incrementando o for apenas depois que ele verificar a quantidade       
                     }
@@ -151,6 +123,8 @@ namespace CompraVenda
             }
             car.FinalizarCompra();
 
+            Console.WriteLine("Aperte qualquer tecla para continuar...");
+            Console.ReadKey();
         }
     }
 }
